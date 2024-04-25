@@ -1,7 +1,19 @@
 import { LOGO_URL } from "../utils/constant";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
+import { useContext } from "react";
+import UserContext from "../utils/UserContext";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
+  const onlineStatus = useOnlineStatus();
+
+  const { loggedInUser } = useContext(UserContext);
+
+  // Subscribing the store using selector/ reading
+  const cartItem = useSelector((store) => store.cart.items);
+  console.log(cartItem);
+
   return (
     <div className="header">
       <div className="logo-container">
@@ -9,6 +21,7 @@ const Header = () => {
       </div>
       <div className="nav-items">
         <ul>
+          <li>Online Status:{onlineStatus ? "🟢" : "🔴"}</li>
           <li>
             <Link to="/">Home</Link>
           </li>
@@ -18,7 +31,10 @@ const Header = () => {
           <li>
             <Link to="/contact"> Contact</Link>
           </li>
-          <li>Cart</li>
+          <li className="font-bold">
+            <Link to="/cart">Cart({cartItem.length})</Link>
+          </li>
+          <li className="text-l font-bold text-cyan-200">{loggedInUser}</li>
         </ul>
       </div>
     </div>

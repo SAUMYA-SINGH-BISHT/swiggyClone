@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Shimmer from "./Shimmer";
 import { MENU_URL } from "../utils/constant";
+import ReturantCategory from "./ResturantCategory";
 
 const RestaurantMenu = () => {
   const { id } = useParams();
   const [resInfo, setResInfo] = useState(null);
+  const [showIndex, setShowIndex] = useState(null);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -20,29 +23,32 @@ const RestaurantMenu = () => {
   if (resInfo === null) return <Shimmer />;
 
   const { name, cuisines, costForTwoMessage } =
-    resInfo?.cards[0]?.card?.card?.info;
-  // const { itemCards } =
-  //   resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card?.card;
-
-  console.log(resInfo);
+    resInfo?.cards[2]?.card?.card?.info;
+  const category =
+    resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+      (c) =>
+        c?.card?.card?.["@type"] ===
+        "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+    );
 
   return (
-    <div className="menu">
-      <h1> {name}</h1>
-      <p>
+    <div className="text-center">
+      <h1 className="font-bold my-2 text-4xl"> {name}</h1>
+      <p className="font-bold text-lg">
         {cuisines.join(", ")} - {costForTwoMessage}
       </p>
-
-      {/* <h2> Menu</h2> */}
-      {/* <ul>
-        {itemCards.map((data) => (
-          <li>hey</li>
-        ))}
-      </ul> */}
+      {category.map((category, index) => (
+        <ReturantCategory
+          data={category.card.card}
+          key={index}
+          showItem={showIndex === index ? true : false}
+          setShowIndex={() => {
+            setShowIndex(index);
+          }}
+        />
+      ))}
     </div>
   );
 };
 
 export default RestaurantMenu;
-
-// Add menu card , as maybe API has changed
